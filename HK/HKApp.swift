@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct HKApp: App {
+    
+    @StateObject var behaviours = Behaviours()
+    
     var body: some Scene {
+        
         WindowGroup {
-            ContentView()
+            RootView()
+                .environmentObject(behaviours)
+                .onOpenURL { incomingURL in
+                    behaviours.handleIncomingDeepLink(incomingURL)
+                }
         }
+        
     }
+    
 }

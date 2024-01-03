@@ -1,0 +1,13 @@
+//
+//  Constants.swift
+//  HK
+//
+//  Created by Peter Kresanič on 02/01/2024.
+//
+
+import Foundation
+
+enum RecordType {
+    static let hkUser = "HKUser"
+    static let hkClient = "HKClient"
+}
