@@ -20,7 +20,6 @@ struct PrimaryButton: View {
         Text(isLoading == true ? "Načítava sa..." : title)
             .font(.system(size: 20, weight: .semibold))
             .foregroundStyle(.hkWhite)
-            .minimumScaleFactor(0.6)
             .lineLimit(1)
             .padding(.vertical, 15)
             .frame(maxWidth: .infinity)

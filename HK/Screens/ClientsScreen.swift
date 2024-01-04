@@ -15,11 +15,10 @@ struct ClientsScreen: View {
             VStack {
                 
                 ForEach(0..<100) { num in
-                    Text("\(num) klienti")
+                    Text("Čoskoro...")
                 }
                 
-            }.background(.green)
-            .headingAndTabPadding()
+            }.headingAndTabPadding()
             
         }.scrollIndicators(.hidden)
         .padding(.horizontal, 15)

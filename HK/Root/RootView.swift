@@ -55,6 +55,18 @@ struct RootView: View {
             
         }
         .ignoresSafeArea()
+        .overlay {
+            if behaviours.isGettingHKItem {
+                Color.hkBlack.opacity(0.4)
+                    .blur(radius: 7)
+                    .ignoresSafeArea()
+            }
+        }
+        .overlay {
+            if behaviours.isShowingSettings {
+                SettingsView().transition(.move(edge: .top))
+            }
+        }
             .fullScreenCover(isPresented: $behaviours.isAskingForEmployeeID) { InsertEmployeeIdView() }
             .task {
                 try? await behaviours.employeeLoad()

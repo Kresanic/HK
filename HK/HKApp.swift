@@ -18,7 +18,16 @@ struct HKApp: App {
             RootView()
                 .environmentObject(behaviours)
                 .onOpenURL { incomingURL in
-                    behaviours.handleIncomingDeepLink(incomingURL)
+                    Task {
+                        behaviours.toggleIsisGettingHKItem(to: true)
+                        do {
+                            try await behaviours.handleIncomingDeepLink(incomingURL)
+                            behaviours.toggleIsisGettingHKItem(to: false)
+                        } catch {
+                            behaviours.toggleIsisGettingHKItem(to: false)
+                            print(error.localizedDescription)
+                        }
+                    }
                 }
         }
         

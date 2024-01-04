@@ -14,6 +14,8 @@
 		393301442B31E17900318C4B /* NarrowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393301432B31E17900318C4B /* NarrowButton.swift */; };
 		393301462B31E6A400318C4B /* ClientsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393301452B31E6A400318C4B /* ClientsScreen.swift */; };
 		393301482B31E6CB00318C4B /* CatalogueScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 393301472B31E6CB00318C4B /* CatalogueScreen.swift */; };
+		3953E9EA2B46F557005AA3C1 /* HKItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953E9E92B46F557005AA3C1 /* HKItem.swift */; };
+		3953E9EC2B470174005AA3C1 /* SearchHKItemInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953E9EB2B470174005AA3C1 /* SearchHKItemInputView.swift */; };
 		395F81AA2B19DF0C0070FD1C /* HKApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395F81A92B19DF0C0070FD1C /* HKApp.swift */; };
 		395F81AE2B19DF0D0070FD1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 395F81AD2B19DF0D0070FD1C /* Assets.xcassets */; };
 		395F81B12B19DF0D0070FD1C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 395F81B02B19DF0D0070FD1C /* Preview Assets.xcassets */; };
@@ -43,6 +45,8 @@
 		393301432B31E17900318C4B /* NarrowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrowButton.swift; sourceTree = "<group>"; };
 		393301452B31E6A400318C4B /* ClientsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsScreen.swift; sourceTree = "<group>"; };
 		393301472B31E6CB00318C4B /* CatalogueScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogueScreen.swift; sourceTree = "<group>"; };
+		3953E9E92B46F557005AA3C1 /* HKItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKItem.swift; sourceTree = "<group>"; };
+		3953E9EB2B470174005AA3C1 /* SearchHKItemInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHKItemInputView.swift; sourceTree = "<group>"; };
 		395F81A62B19DF0C0070FD1C /* HK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		395F81A92B19DF0C0070FD1C /* HKApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKApp.swift; sourceTree = "<group>"; };
 		395F81AD2B19DF0D0070FD1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -82,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				39088B572B447A9C00E6E1E5 /* HKUser.swift */,
+				3953E9E92B46F557005AA3C1 /* HKItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -130,7 +135,6 @@
 			children = (
 				39C15B242B236C4D00677053 /* RootView.swift */,
 				3933014B2B31E91A00318C4B /* TabView */,
-				3999C3A92B2FAAB500D27CE1 /* InsertEmployeeIdView.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -157,9 +161,11 @@
 		3933014F2B31E96000318C4B /* Reusables */ = {
 			isa = PBXGroup;
 			children = (
+				3999C3A92B2FAAB500D27CE1 /* InsertEmployeeIdView.swift */,
 				39D98F042B2A3CCE00F4964C /* SettingsView.swift */,
 				39B40C1F2B364499009A8AEE /* ItemPreview.swift */,
 				39B40C212B3653E4009A8AEE /* NewItemsSheet.swift */,
+				3953E9EB2B470174005AA3C1 /* SearchHKItemInputView.swift */,
 			);
 			path = Reusables;
 			sourceTree = "<group>";
@@ -293,9 +299,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				393301462B31E6A400318C4B /* ClientsScreen.swift in Sources */,
+				3953E9EA2B46F557005AA3C1 /* HKItem.swift in Sources */,
 				39088B5E2B44826700E6E1E5 /* Constants.swift in Sources */,
 				39088B582B447A9C00E6E1E5 /* HKUser.swift in Sources */,
 				393301442B31E17900318C4B /* NarrowButton.swift in Sources */,
+				3953E9EC2B470174005AA3C1 /* SearchHKItemInputView.swift in Sources */,
 				39D98F012B2A2D7200F4964C /* Fonts Extension.swift in Sources */,
 				39088B602B4483B900E6E1E5 /* CKRecord Extension.swift in Sources */,
 				393301482B31E6CB00318C4B /* CatalogueScreen.swift in Sources */,

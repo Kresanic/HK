@@ -17,15 +17,11 @@ struct HomeScreen: View {
             
             VStack {
                 
-                if let employee = behaviours.employee, let employeeFirstName = employee.firstName {
-                    Text(employeeFirstName)
-                }
                 ForEach(0..<100) { num in
-                    Text("\(num) domov")
+                    Text("Čoskoro...")
                 }
                 
-            }.background(.pink)
-            .headingAndTabPadding()
+            }.headingAndTabPadding()
             
         }.scrollIndicators(.hidden)
         .padding(.horizontal, 15)

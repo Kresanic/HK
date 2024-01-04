@@ -26,7 +26,7 @@ struct ScreenHeadingView: View {
             ForEach(buttons) { button in
                 ScreenHeadingButtonView(button: button)
             }
-            
+                
             if let employee = behaviours.employee {
                 Text(employee.initials)
                     .font(.system(size: 20, weight: .semibold))
@@ -35,7 +35,7 @@ struct ScreenHeadingView: View {
                     .background(.hkGray)
                     .clipShape(.circle)
                     .padding(.leading, 4)
-                    .onTapGesture { behaviours.removeEmployee() }
+                    .onTapGesture { behaviours.toggleShowSettings(to: true) }
             }
             
         }

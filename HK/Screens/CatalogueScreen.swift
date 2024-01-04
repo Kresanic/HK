@@ -16,11 +16,10 @@ struct CatalogueScreen: View {
             VStack {
                 
                 ForEach(0..<100) { num in
-                    Text("\(num) katalog")
+                    Text("Čoskoro...")
                 }
                 
-            }.background(.blue)
-                .headingAndTabPadding()
+            }.headingAndTabPadding()
             
         }.scrollIndicators(.hidden)
             .padding(.horizontal, 15)

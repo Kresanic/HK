@@ -21,15 +21,15 @@ struct CustomTabView: View {
                 HStack(spacing: 15) {
                     
                     Button {
-                        behaviours.isScanningQRCode = true
+                        behaviours.isInputingHKItemID = true
                     } label: {
-                        NarrowButton(title: "Skenovať", sfSymbol: "qrcode", buttonRole: .option)
+                        NarrowButton(title: "Zadať kód", sfSymbol: "number", buttonRole: .option)
                     }
                     
                     Button {
-                        behaviours.isAddingNewItems = true
+                        behaviours.isScanningQRCode = true
                     } label: {
-                        NarrowButton(title: "Nový produkt", sfSymbol: "plus.app", buttonRole: .confirmation)
+                        NarrowButton(title: "Skenovať", sfSymbol: "qrcode", buttonRole: .confirmation)
                     }
                     
                 }.padding(.horizontal, 15)
@@ -76,7 +76,7 @@ struct CustomTabView: View {
                 
                 Spacer()
                 
-            }.frame(maxHeight: 90)
+            }.frame(maxHeight: 80)
                 .background {
                     Color.hkWhite.opacity(0.5)
                         .background(.ultraThinMaterial)
@@ -89,9 +89,12 @@ struct CustomTabView: View {
                 CodeScannerView(codeTypes: [.qr], showViewfinder: true, completion: handleScan).ignoresSafeArea()
                     .presentationCornerRadius(25)
             }
-            .sheet(item: $behaviours.isShowingProductOfCode) { code in
-                ItemPreview(item: code)
+            .sheet(item: $behaviours.isShowingHKItem) { hkItem in
+                ItemPreview(hkItem: hkItem)
                     .presentationCornerRadius(25)
+            }
+            .sheet(isPresented: $behaviours.isInputingHKItemID) {
+                SearchHKItemInputView()
             }
             .fullScreenCover(isPresented: $behaviours.isAddingNewItems) {
                 NewItemsSheet()
@@ -104,9 +107,18 @@ struct CustomTabView: View {
         behaviours.isScanningQRCode = false
         switch result {
         case .success(let data):
-            let impactMed = UIImpactFeedbackGenerator(style: .heavy)
-            impactMed.impactOccurred()
-            behaviours.isShowingProductOfCode = data.string
+            behaviours.toggleIsisGettingHKItem(to: true)
+            Task {
+                do {
+                    guard let itemURL = URL(string: data.string) else { throw RuntimeError("noURL")}
+                    try await behaviours.handleIncomingDeepLink(itemURL)
+                    behaviours.toggleIsisGettingHKItem(to: false)
+                    print(behaviours.isShowingHKItem?.itemID ?? "Neni")
+                } catch {
+                    print(error.localizedDescription)
+                    behaviours.toggleIsisGettingHKItem(to: false)
+                }
+            }
         case .failure(_):
             print("error")
         }

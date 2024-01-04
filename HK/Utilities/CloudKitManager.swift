@@ -15,6 +15,26 @@ final class CloudKitManager {
     
     private init() {}
     
+    func getItem(itemID: String) async throws -> HKItem {
+        
+        let sortDescriptor = NSSortDescriptor(key: HKItem.kSoldOn, ascending: true)
+        let predicate = NSPredicate(format: "itemID == %@", itemID)
+        let query = CKQuery(recordType: RecordType.hkItem, predicate: predicate)
+        query.sortDescriptors = [sortDescriptor]
+        
+        print("1", itemID)
+        let (matchedResults, _) = try await container.publicCloudDatabase.records(matching: query, resultsLimit: 1)
+        print("2", matchedResults.count)
+        let records = matchedResults.compactMap { _, result in try? result.get() }
+        print("3", records.first)
+        guard let hkItemRecord = records.first else { throw RuntimeError("1") }
+        print("4", hkItemRecord.recordID)
+        let hkItem = HKItem(ckRecord: hkItemRecord)
+        print("5", hkItem.itemID)
+        return hkItem
+        
+    }
+    
     func getUser(employeeID: String) async throws -> HKUser {
         
         let sortDescriptor = NSSortDescriptor(key: HKUser.kAccessLevel, ascending: true)
@@ -89,17 +109,17 @@ final class CloudKitManager {
     
 }
 
-//struct RuntimeError: LocalizedError {
-//    let description: String
-//
-//    init(_ description: String) {
-//        self.description = description
-//    }
-//
-//    var errorDescription: String? {
-//        description
-//    }
-//}
+struct RuntimeError: LocalizedError {
+    let description: String
+
+    init(_ description: String) {
+        self.description = description
+    }
+
+    var errorDescription: String? {
+        description
+    }
+}
 
 enum EmployeeErrors: Error {
     

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ItemPreview: View {
     
-    var item: String
+    var hkItem: HKItem
     
     @Environment(\.dismiss) var dismiss
     
@@ -27,7 +27,7 @@ struct ItemPreview: View {
                         
                         Spacer()
                         
-                        Text("#\(item)")
+                        Text("#\(hkItem.unwrappedItemID)")
                             .font(.system(size: 35, weight: .bold))
                             .foregroundStyle(.hkBlack)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -44,8 +44,9 @@ struct ItemPreview: View {
                     SectionHeading(title: "Detaily", sfSymbol: "list.bullet.clipboard.fill")
                     
                     DetailedBubble(details: [
-                        .init(key: "Typ", value: "AC 25/1150"),
+                        .init(key: "Typ", value: hkItem.unwrappedType),
                         .init(key: "Záruka", value: "Platná"),
+                        .init(key: "Predané", value: hkItem.unwrappedSoldOn.formatted(date: .abbreviated, time: .omitted)),
                         .init(key: "Predné kolesá", value: "Guma"),
                         .init(key: "Zadné kolesá", value: "Polyuretán")
                     ])
@@ -94,6 +95,7 @@ struct ItemPreview: View {
                         .padding(20)
                 }
             }
+            .presentationBackground(.hkWhite)
         
         
     }

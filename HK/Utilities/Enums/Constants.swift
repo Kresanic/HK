@@ -10,4 +10,5 @@ import Foundation
 enum RecordType {
     static let hkUser = "HKUser"
     static let hkClient = "HKClient"
+    static let hkItem = "HKItem"
 }

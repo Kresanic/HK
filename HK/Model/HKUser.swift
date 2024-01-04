@@ -25,8 +25,24 @@ struct HKUser: Codable, Equatable {
         }
     }
     
-    var unwrappedEmployeeID: String {
-        employeeID ?? ""
+    var unwrappedEmployeeID: String { employeeID ?? "" }
+    
+    var wholeName: String {
+        var finalName = ""
+        
+        if let firstName {
+            finalName = finalName + " \(firstName)"
+        }
+        
+        if let middleName {
+            finalName = finalName + " \(middleName)"
+        }
+        
+        if let lastName {
+            finalName = finalName + " \(lastName)"
+        }
+        
+        return finalName
     }
     
     var isFilled: Bool { firstName != nil && lastName != nil && employeeID != nil && accessLevel != nil }
