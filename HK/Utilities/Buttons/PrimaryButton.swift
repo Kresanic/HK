@@ -17,17 +17,19 @@ struct PrimaryButton: View {
     
     var body: some View {
         
+        let opacity = isLoading ?? false ? 0.5 : 1.0
+        
         Text(isLoading == true ? "Načítava sa..." : title)
             .font(.system(size: 20, weight: .semibold))
-            .foregroundStyle(.hkWhite)
+            .foregroundStyle(buttonRole == .confirmation ? .hkWhite : .hkBlack)
             .lineLimit(1)
             .padding(.vertical, 15)
             .frame(maxWidth: .infinity)
-            .background(isLoading == true ? Color.hkPurple.opacity(0.5) : Color.hkPurple)
+            .background(buttonRole == .confirmation ? Color.hkPurple.opacity(opacity) : Color.hkGray.opacity(opacity))
             .clipShape(.rect(cornerRadius: 20, style: .continuous))
             .padding(.horizontal, 15)
             
-        
     }
+    
 }
 

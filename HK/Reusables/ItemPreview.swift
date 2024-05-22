@@ -17,7 +17,7 @@ struct ItemPreview: View {
     
         ScrollView {
             
-            Image(.placeholderPalette)
+            Image(uiImage: hkItem.unwrappedFirstPhoto)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 350)
@@ -45,10 +45,9 @@ struct ItemPreview: View {
                     
                     DetailedBubble(details: [
                         .init(key: "Typ", value: hkItem.unwrappedType),
-                        .init(key: "Záruka", value: "Platná"),
                         .init(key: "Predané", value: hkItem.unwrappedSoldOn.formatted(date: .abbreviated, time: .omitted)),
-                        .init(key: "Predné kolesá", value: "Guma"),
-                        .init(key: "Zadné kolesá", value: "Polyuretán")
+                        .init(key: "Cena", value: (hkItem.soldFor ?? 0.00).formatted(.currency(code: "EUR")) ),
+                        .init(key: "Nosnosť", value: "\(hkItem.capacity ?? 0)kg")
                     ])
                     
                 }
@@ -163,5 +162,20 @@ struct DetailPair: Identifiable {
     var id = UUID()
     var key: String
     var value: String
+    
+    init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
+    
+    init(key: String, value: Int) {
+        self.key = key
+        self.value = String(value)
+    }
+    
+    init(key: String, value: Double) {
+        self.key = key
+        self.value = String(value)
+    }
     
 }

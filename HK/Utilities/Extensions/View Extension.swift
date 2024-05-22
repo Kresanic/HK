@@ -13,12 +13,12 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
-    func screenHeading(tabView: TabViews, buttons: [ScreenHeadingButton] = []) -> some View {
-        return modifier(ScreenHeadingMod(tabView: tabView, buttons: buttons))
+    func screenHeading(tabView: TabViews, buttons: [ScreenHeadingButton] = [], isInNavigation: Bool = false) -> some View {
+        return modifier(ScreenHeadingMod(tabView: tabView, buttons: buttons, isInNavigation: isInNavigation))
     }
     
-    func headingAndTabPadding() -> some View {
-        return modifier(HeadingAndTabPadding())
+    func headingAndTabPadding(isInNavigation: Bool = false) -> some View {
+        return modifier(HeadingAndTabPadding(isInNavigation: isInNavigation))
     }
     
 }
@@ -26,11 +26,12 @@ extension View {
 struct HeadingAndTabPadding: ViewModifier {
     
     @EnvironmentObject var behaviours: Behaviours
+    var isInNavigation: Bool
     
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity)
-            .padding(.top, 130)
+            .padding(.top, isInNavigation ? 80 : 130)
             .padding(.bottom, behaviours.activeTab == .home ? 155 : 105)
     }
     

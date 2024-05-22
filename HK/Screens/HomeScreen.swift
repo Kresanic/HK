@@ -19,6 +19,12 @@ struct HomeScreen: View {
                 
                 ForEach(0..<100) { num in
                     Text("Čoskoro...")
+                        .foregroundStyle(.hkWhite)
+                        .frame(height: 150)
+                        .frame(maxWidth: .infinity)
+                        .background(.hkGray)
+                        .clipShape(.rect(cornerRadius: 30, style: .continuous))
+//                        .shadow(color: Color.hkBlack.opacity(0.4),radius: 2)
                 }
                 
             }.headingAndTabPadding()

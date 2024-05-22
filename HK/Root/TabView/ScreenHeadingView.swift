@@ -12,6 +12,7 @@ struct ScreenHeadingView: View {
     @EnvironmentObject var behaviours: Behaviours
     var tabView: TabViews
     var buttons: [ScreenHeadingButton] = []
+    var isInNavigation: Bool = false
     
     var body: some View {
         
@@ -41,7 +42,7 @@ struct ScreenHeadingView: View {
         }
         .padding(.bottom, 3)
         .padding(.horizontal, 15)
-        .padding(.top, 75)
+        .padding(.top, isInNavigation ? 25 : 75)
             .background(Color.hkWhite.opacity(0.75))
             .background(.ultraThinMaterial)
         
@@ -53,12 +54,12 @@ struct ScreenHeadingMod: ViewModifier {
     
     var tabView: TabViews
     var buttons: [ScreenHeadingButton] = []
-    
+    var isInNavigation: Bool = false
     
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .top) {
-                ScreenHeadingView(tabView: tabView, buttons: buttons)
+                ScreenHeadingView(tabView: tabView, buttons: buttons, isInNavigation: isInNavigation)
             }
     }
     

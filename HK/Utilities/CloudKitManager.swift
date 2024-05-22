@@ -12,25 +12,44 @@ final class CloudKitManager {
     static let shared = CloudKitManager()
     
     let container = CKContainer(identifier: "iCloud.Kresanic.HK")
+    let publicDatabase = CKContainer(identifier: "iCloud.Kresanic.HK").publicCloudDatabase
     
     private init() {}
     
-    func getItem(itemID: String) async throws -> HKItem {
+    func getClients() async throws -> [HKClient] {
+        
+        let sortDescriptor = NSSortDescriptor(key: HKClient.kBusinessID, ascending: true)
+        let predicate = NSPredicate(format: "name != %@", "test")
+        let query = CKQuery(recordType: RecordType.hkClient, predicate: predicate)
+        query.sortDescriptors = [sortDescriptor]
+        
+        let (matchedResults, _) = try await publicDatabase.records(matching: query)
+        
+        var clients: [HKClient] = []
+        
+        matchedResults.forEach { _, result in
+            let client = try? result.get()
+            if let client { clients.append(HKClient(ckRecord: client)) }
+        }
+        
+        return clients
+        
+    }
+    
+    func getItem(itemID: HKItemID) async throws -> HKItem {
+        
+        guard !itemID.isMockUpID else { throw ItemErrors.mockUpID }
         
         let sortDescriptor = NSSortDescriptor(key: HKItem.kSoldOn, ascending: true)
-        let predicate = NSPredicate(format: "itemID == %@", itemID)
+        let predicate = NSPredicate(format: "itemID == %@", itemID.id)
         let query = CKQuery(recordType: RecordType.hkItem, predicate: predicate)
         query.sortDescriptors = [sortDescriptor]
         
-        print("1", itemID)
-        let (matchedResults, _) = try await container.publicCloudDatabase.records(matching: query, resultsLimit: 1)
-        print("2", matchedResults.count)
+        guard let (matchedResults, _) = try? await container.publicCloudDatabase.records(matching: query, resultsLimit: 1) else { throw ItemErrors.failedFetching }
+        guard matchedResults.count > 0 else { throw ItemErrors.notCreated }
         let records = matchedResults.compactMap { _, result in try? result.get() }
-        print("3", records.first)
-        guard let hkItemRecord = records.first else { throw RuntimeError("1") }
-        print("4", hkItemRecord.recordID)
+        guard let hkItemRecord = records.first else { throw ItemErrors.failedFetching }
         let hkItem = HKItem(ckRecord: hkItemRecord)
-        print("5", hkItem.itemID)
         return hkItem
         
     }
@@ -50,7 +69,7 @@ final class CloudKitManager {
         
         let hkUser = HKUser(ckRecord: hkUserRecord)
         
-        try await assingHKUserToUser(employee: hkUserRecord.recordID)
+        try await assignHKUserToUser(employee: hkUserRecord.recordID)
         
         let assignedHKUserToUser = try await getAssignedHKUserToUser()
         
@@ -78,8 +97,76 @@ final class CloudKitManager {
         
     }
     
+    func getHKCategories() async throws -> [HKCatalogueCategory] {
+        
+        let sortDescriptor = NSSortDescriptor(key: HKCatalogueCategory.kName, ascending: true)
+        let query = CKQuery(recordType: RecordType.hkCatalogueCategory, predicate: NSPredicate(format: "name != %@", "test"))
+        query.sortDescriptors = [sortDescriptor]
+        
+        let (matchedResults, _) = try await container.publicCloudDatabase.records(matching: query)
+        
+        var categories: [HKCatalogueCategory] = []
+        
+        matchedResults.forEach { _, result in
+            let category = try? result.get()
+            if let category { categories.append(HKCatalogueCategory(ckRecord: category)) }
+        }
+        
+        return categories
+        
+    }
+    
+    func getHKItems(in category: HKCatalogueCategory) async throws -> [HKCatalogueItem] {
+        
+        let sortDescriptor = NSSortDescriptor(key: HKCatalogueItem.kType, ascending: true)
+        let reference = category.reference
+        let query = CKQuery(recordType: RecordType.hkCatalogueItem, predicate: NSPredicate(format: "category == %@", reference))
+        query.sortDescriptors = [sortDescriptor]
+        
+        let (matchedResults, _) = try await container.publicCloudDatabase.records(matching: query)
+        
+        var items: [HKCatalogueItem] = []
+        
+        matchedResults.forEach { _, result in
+            let item = try? result.get()
+            if let item { items.append(HKCatalogueItem(ckRecord: item)) }
+        }
+        
+        return items
+        
+    }
+    
+    func addNewItems(catalogueItem: HKCatalogueItem, itemIDs: [HKItemID]) async throws {
+        
+        var ckRecords: [CKRecord] = []
+        
+        for itemID in itemIDs {
+            
+            let newRecord = CKRecord(recordType: RecordType.hkItem)
+
+            newRecord[HKItem.kItemID] = itemID.id
+            
+            newRecord[HKItem.kCapacity] = catalogueItem.capacity
+            newRecord[HKItem.kLength] = catalogueItem.length
+            newRecord[HKItem.kWidth] = catalogueItem.width
+            newRecord[HKItem.kType] = catalogueItem.type
+            newRecord[HKItem.kSoldFor] = catalogueItem.price
+            newRecord[HKItem.kSoldOn] = Date.now
+            
+            let photosAsCkAss = catalogueItem.photos?.compactMap { $0.convertToCKAsset() }
+            
+            newRecord[HKItem.kPhotos] = photosAsCkAss
+            
+            ckRecords.append(newRecord)
+            
+        }
+        
+        try await batchSave(records: ckRecords)
+        
+    }
+    
     @discardableResult
-    private func assingHKUserToUser(employee ckRecordID: CKRecord.ID?) async throws -> HKUser {
+    private func assignHKUserToUser(employee ckRecordID: CKRecord.ID?) async throws -> HKUser {
         
         guard let hkUserRecordID = ckRecordID else { throw EmployeeErrors.somethingWentWrong(4) }
         
@@ -89,9 +176,30 @@ final class CloudKitManager {
         
         record["hkUser"] = CKRecord.Reference(recordID: hkUserRecordID, action: .none)
         
-        guard let savedHKUser = try await batchSave(records: [record]).map(HKUser.init).first else { throw EmployeeErrors.somethingWentWrong(5)}
+        guard let savedHKUser = try await batchSave(records: [record]).map(HKUser.init).first else { throw EmployeeErrors.somethingWentWrong(5) }
         
         return savedHKUser
+        
+    }
+    
+    func getItemsAssociatedToClient(_ client: HKClient) async throws -> [HKItem] {
+        
+        let reference = CKRecord.Reference(recordID: client.recordID, action: .none)
+        let sortDescriptor = NSSortDescriptor(key: HKItem.kSoldOn, ascending: true)
+        let predicate = NSPredicate(format: "hkClient == %@", reference)
+        let query = CKQuery(recordType: RecordType.hkItem, predicate: predicate)
+        query.sortDescriptors = [sortDescriptor]
+        
+        let (matchedResults, _) = try await container.publicCloudDatabase.records(matching: query)
+        
+        var items: [HKItem] = []
+        
+        matchedResults.forEach { _, result in
+            let item = try? result.get()
+            if let item { items.append(HKItem(ckRecord: item)) }
+        }
+        
+        return items
         
     }
     
@@ -106,7 +214,6 @@ final class CloudKitManager {
         
     }
     
-    
 }
 
 struct RuntimeError: LocalizedError {
@@ -119,6 +226,10 @@ struct RuntimeError: LocalizedError {
     var errorDescription: String? {
         description
     }
+}
+
+enum ItemErrors: Error {
+    case notCreated, mockUpID, failedFetching
 }
 
 enum EmployeeErrors: Error {

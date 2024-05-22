@@ -1,15 +1,16 @@
 //
-//  CatalogueScreen.swift
+//  SelectingItemCatalogue.swift
 //  HK
 //
-//  Created by Peter Kresanič on 19/12/2023.
+//  Created by Peter Kresanič on 09/02/2024.
 //
 
 import SwiftUI
 
-struct CatalogueScreen: View {
+struct SelectingItemCatalogue: View {
     
     @EnvironmentObject var behaviours: Behaviours
+    @Binding var selectedHKItem: HKCatalogueItem?
     
     var body: some View {
         
@@ -68,9 +69,9 @@ struct CatalogueScreen: View {
                 .padding(.horizontal, 15)
                 .screenHeading(tabView: .catalogue, isInNavigation: true)
                 .navigationDestination(for: HKCatalogueCategory.self) { category in
-                    ProductsInCategoryView(category: category)
+                    SelectingItemInCategory(category: category, selectedHKItem: $selectedHKItem)
                 }
-                
+            
         }
         
     }

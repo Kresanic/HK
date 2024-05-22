@@ -12,6 +12,8 @@ struct SearchHKItemInputView: View {
     @FocusState var focusedTextField: Bool
     @State var inputedCode = ""
     @EnvironmentObject var behaviours: Behaviours
+    @Environment(\.dismiss) var dismiss
+    let action: (_ code: String) async -> ()
     
     var body: some View {
         
@@ -43,18 +45,11 @@ struct SearchHKItemInputView: View {
                 .task { focusedTextField = true }
                 
             Button {
-                withAnimation { behaviours.isGettingHKItem = true }
                 Task {
-                    do {
-                        try await behaviours.handleIncomingHKItemID(inputedCode)
-                    } catch {
-                        behaviours.isInputingHKItemID = false
-                        behaviours.isGettingHKItem = false
-                        print(error.localizedDescription)
-                    }
+                    await action(inputedCode)
                 }
             } label: {
-                PrimaryButton(title: "Nájsť!", isLoading: behaviours.isGettingHKItem)
+                PrimaryButton(title: "Nájsť!", isLoading: behaviours.isFetchingHKItem)
                     .padding(.top, 15)
             }
             

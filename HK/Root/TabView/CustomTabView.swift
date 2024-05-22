@@ -21,13 +21,7 @@ struct CustomTabView: View {
                 HStack(spacing: 15) {
                     
                     Button {
-                        behaviours.isInputingHKItemID = true
-                    } label: {
-                        NarrowButton(title: "Zadať kód", sfSymbol: "number", buttonRole: .option)
-                    }
-                    
-                    Button {
-                        behaviours.isScanningQRCode = true
+                        behaviours.isScanning = true
                     } label: {
                         NarrowButton(title: "Skenovať", sfSymbol: "qrcode", buttonRole: .confirmation)
                     }
@@ -40,14 +34,15 @@ struct CustomTabView: View {
                             .background(.ultraThinMaterial)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                    
+                
             } else if behaviours.activeTab == .clients {
+                
                 HStack(spacing: 15) {
                     
                     Button {
-                        behaviours.isAddingNewItems = true
+                        behaviours.isConnectingToClient = true
                     } label: {
-                        NarrowButton(title: "Priradiť produkty ku klientovi", sfSymbol: "rectangle.stack.badge.person.crop", buttonRole: .confirmation)
+                        NarrowButton(title: "Priradiť produkt", sfSymbol: "person.fill.badge.plus", buttonRole: .confirmation)
                     }
                     
                 }.padding(.horizontal, 15)
@@ -58,7 +53,26 @@ struct CustomTabView: View {
                             .background(.ultraThinMaterial)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                
             }
+//            } else if behaviours.activeTab == .clients {
+//                HStack(spacing: 15) {
+//                    
+//                    Button {
+//                        behaviours.isAddingNewItems = true
+//                    } label: {
+//                        NarrowButton(title: "Priradiť produkty ku klientovi", sfSymbol: "rectangle.stack.badge.person.crop", buttonRole: .confirmation)
+//                    }
+//                    
+//                }.padding(.horizontal, 15)
+//                    .padding(.top, 10)
+//                    .zIndex(3)
+//                    .background {
+//                        Color.hkWhite.opacity(0.5)
+//                            .background(.ultraThinMaterial)
+//                    }
+//                    .transition(.move(edge: .bottom).combined(with: .opacity))
+//            }
             
             HStack(alignment: .center) {
                 
@@ -85,43 +99,7 @@ struct CustomTabView: View {
         }
         .padding(.bottom, 10)
             .frame(maxWidth: .infinity)
-            .sheet(isPresented: $behaviours.isScanningQRCode) {
-                CodeScannerView(codeTypes: [.qr], showViewfinder: true, completion: handleScan).ignoresSafeArea()
-                    .presentationCornerRadius(25)
-            }
-            .sheet(item: $behaviours.isShowingHKItem) { hkItem in
-                ItemPreview(hkItem: hkItem)
-                    .presentationCornerRadius(25)
-            }
-            .sheet(isPresented: $behaviours.isInputingHKItemID) {
-                SearchHKItemInputView()
-            }
-            .fullScreenCover(isPresented: $behaviours.isAddingNewItems) {
-                NewItemsSheet()
-                    .statusBarHidden()
-            }
-     
-    }
-    
-    func handleScan(result: Result<ScanResult, ScanError>) {
-        behaviours.isScanningQRCode = false
-        switch result {
-        case .success(let data):
-            behaviours.toggleIsisGettingHKItem(to: true)
-            Task {
-                do {
-                    guard let itemURL = URL(string: data.string) else { throw RuntimeError("noURL")}
-                    try await behaviours.handleIncomingDeepLink(itemURL)
-                    behaviours.toggleIsisGettingHKItem(to: false)
-                    print(behaviours.isShowingHKItem?.itemID ?? "Neni")
-                } catch {
-                    print(error.localizedDescription)
-                    behaviours.toggleIsisGettingHKItem(to: false)
-                }
-            }
-        case .failure(_):
-            print("error")
-        }
+            
     }
     
 }
